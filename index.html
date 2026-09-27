@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vani Threads Content Generator | @vanimurgen</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            vani: {
+              50: '#fdf2f8',
+              100: '#fce7f3',
+              200: '#fbcfe8',
+              300: '#f472b6',
+              400: '#e879f9',
+              500: '#ec4899',
+              600: '#db2777',
+              700: '#be185d',
+              800: '#9d174d',
+              900: '#831843',
+            },
+            purplehub: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              900: '#4c1d95',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%);
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <header class="w-full bg-white/80 backdrop-blur-md border-b border-pink-100 sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-pink-200">
+          V
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-pink-600 to-purple-700 bg-clip-text text-transparent">
+            Vani Threads Generator
+          </h1>
+          <p class="text-xs text-slate-500 font-medium">@vanimurgen &bull; Vani Learning Hub</p>
+        </div>
+      </div>
+
+      <!-- Auth Action Container -->
+      <div id="authHeaderNav">
+        <!-- Dynamically filled by JS -->
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 md:py-8">
+    
+    <!-- LOGIN VIEW (Shown when logged out) -->
+    <div id="loginView" class="hidden max-w-md mx-auto my-12 text-center">
+      <div class="glass-card rounded-3xl p-8 shadow-xl border border-pink-100 space-y-6">
+        <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-3xl flex items-center justify-center mx-auto text-3xl font-extrabold shadow-inner">
+          ✨
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-slate-800">Selamat Datang!</h2>
+          <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+            Generate natural, high-converting Threads posts for <strong>Vani Learning Hub</strong> tailored specifically for Malaysian parents.
+          </p>
+        </div>
+
+        <div class="bg-pink-50/60 p-4 rounded-2xl text-left text-xs text-pink-900 space-y-1.5 border border-pink-100">
+          <p class="font-semibold flex items-center gap-1.5 text-pink-700">
+            <span>💡</span> Built for @vanimurgen:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-slate-600">
+            <li>90% BM + 10% Everyday English (Manglish)</li>
+            <li>Mom-to-mom relatable storytelling voice</li>
+            <li>5 distinct angles per prompt & anti-repetition</li>
+          </ul>
+        </div>
+
+        <button id="googleLoginBtn" class="w-full bg-white hover:bg-slate-50 text-slate-700 font-semibold py-3.5 px-4 border border-slate-200 rounded-2xl shadow-sm flex items-center justify-center space-x-3 transition-all hover:shadow-md active:scale-[0.98]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- GENERATOR APP VIEW (Shown when authenticated) -->
+    <div id="appView" class="hidden space-y-6">
+      
+      <!-- Bio Banner -->
+      <div class="glass-card rounded-2xl p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-pink-100 shadow-sm">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-pink-400 to-purple-500 p-0.5 shadow-md shrink-0">
+            <div class="w-full h-full bg-white rounded-full flex items-center justify-center font-bold text-pink-600 text-lg">
+              👩‍👦
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="font-bold text-slate-800 text-base">Vani Learning Hub</h2>
+              <span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-medium">@vanimurgen</span>
+            </div>
+            <p class="text-xs text-slate-600 mt-0.5">
+              Mom of 3 &bull; Share apa yang I test & rasa genuinely helpful untuk anak belajar kat rumah.
+            </p>
+          </div>
+        </div>
+        <div class="text-xs text-slate-500 bg-white/80 px-3 py-2 rounded-xl border border-slate-100 self-stretch md:self-auto text-center md:text-right">
+          <span class="font-semibold text-pink-600">Target Audience:</span> Malaysian Mak-Mak & Parents
+        </div>
+      </div>
+
+      <!-- Main Input Panel -->
+      <div class="glass-card rounded-3xl p-5 md:p-7 shadow-lg border border-pink-100 space-y-6">
+        
+        <!-- Content Purpose / Types -->
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center justify-between">
+            <span>1. Select Content Purpose</span>
+            <span class="text-xs font-normal text-slate-400">Choose 1 option</span>
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" id="purposeContainer">
+            <!-- Dynamic Content Purpose Buttons generated via JS -->
+          </div>
+        </div>
+
+        <!-- Custom Context Input Area -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <label for="customInput" class="block text-sm font-bold text-slate-700" id="inputLabel">
+              2. Topic Details / Situation / Product Notes
+            </label>
+            <span class="text-xs text-slate-400" id="inputHint">Be as detailed or brief as you like</span>
+          </div>
+          <textarea id="customInput" rows="4" 
+            placeholder="E.g., Anak selalu tersangkut bila bina ayat English. Grammar faham, tapi bila minta tulis 1 sentence terus blur. Or paste product info like Grammar Hub / English Complete Bundle..."
+            class="w-full p-4 text-slate-700 text-sm bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-pink-400 focus:border-transparent outline-none transition-all resize-y shadow-inner custom-scrollbar"></textarea>
+        </div>
+
+        <!-- Action Button -->
+        <button id="generateBtn" class="w-full bg-gradient-to-r from-pink-500 via-pink-600 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-pink-200 hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-2 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed">
+          <span id="btnIcon" class="text-xl">🚀</span>
+          <span id="btnText" class="text-base">GENERATE 5 POSTS</span>
+        </button>
+
+      </div>
+
+      <!-- Results Container -->
+      <div id="resultsSection" class="hidden space-y-6">
+        <div class="flex items-center justify-between px-1">
+          <div>
+            <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span>✨</span> Generated 5 Threads Variations
+            </h3>
+            <p class="text-xs text-slate-500">Each post uses a distinct angle, hook, and storytelling rhythm.</p>
+          </div>
+          <button id="clearHistoryBtn" class="text-xs text-slate-400 hover:text-pink-600 underline">
+            Clear Session Anti-Repetition History
+          </button>
+        </div>
+
+        <!-- 5 Cards Wrapper -->
+        <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Dynamically populated 5 post cards -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl text-sm font-medium transition-all duration-300 opacity-0 transform translate-y-4 pointer-events-none flex items-center gap-2 z-50">
+    <span id="toastIcon">📋</span>
+    <span id="toastMsg">Copied to clipboard!</span>
+  </div>
+
+  <script type="module">
+    // Firebase Modular SDK Import
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // -------------------------------------------------------------
+    // 1. FIREBASE CONFIGURATION
+    // -------------------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyCHSrhWhgqcAfKzA9IaH5VRI7LFu1j7lcg",
+      authDomain: "thread-s-post-generator.firebaseapp.com",
+      databaseURL: "https://thread-s-post-generator-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "thread-s-post-generator",
+      storageBucket: "thread-s-post-generator.firebasestorage.app",
+      messagingSenderId: "737838813352",
+      appId: "1:737838813352:web:27c6361b05e59acf60f29d"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Application State
+    let currentUser = null;
+    let selectedPurpose = 'English Tips';
+    let sessionGeneratedHistory = []; // Anti-repetition tracker
+
+    // -------------------------------------------------------------
+    // 2. CONTENT TYPES DEFINITION
+    // -------------------------------------------------------------
+    const CONTENT_PURPOSES = [
+      { id: 'English Tips', label: '💡 English Tips', hint: 'Simple English tips, grammar, vocabulary or common writing mistakes.' },
+      { id: 'Study Hacks', label: '🎒 Study Hacks', hint: 'Home study habits, organizing homework routines, learning hacks.' },
+      { id: 'Exam Preparation', label: '✍️ Exam Prep', hint: 'KSSR exam prep, school tests, handling revision anxiety.' },
+      { id: "My Son's Journey", label: "👦 My Son's Journey", hint: 'Real home-learning stories, 9-year-old son\'s struggles & progress.' },
+      { id: 'Problem -> Solution', label: '🔍 Problem → Solution', hint: 'Identify a common child learning blockage and offer a clear fix.' },
+      { id: 'Good Morning', label: '☀️ Good Morning', hint: 'Relatable morning routines, parenting encouragement, school day vibes.' },
+      { id: 'Engagement', label: '💬 Engagement', hint: 'Start a warm conversation or discussion with Malaysian mak-mak.' },
+      { id: 'Reply Post', label: '💬 Reply Post', hint: 'Paste the original Threads comment or post to generate a thoughtful reply.' },
+      { id: 'Custom Post', label: '📦 Custom / Product', hint: 'Describe any offer, Grammar Hub, English Complete Bundle, StudyBox, or specific custom instructions.' }
+    ];
+
+    // DOM Elements
+    const loginView = document.getElementById('loginView');
+    const appView = document.getElementById('appView');
+    const authHeaderNav = document.getElementById('authHeaderNav');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const purposeContainer = document.getElementById('purposeContainer');
+    const customInput = document.getElementById('customInput');
+    const inputLabel = document.getElementById('inputLabel');
+    const inputHint = document.getElementById('inputHint');
+    const generateBtn = document.getElementById('generateBtn');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    const resultsSection = document.getElementById('resultsSection');
+    const postsGrid = document.getElementById('postsGrid');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const toast = document.getElementById('toast');
+
+    // Render Content Purpose Pills
+    function renderPurposeButtons() {
+      purposeContainer.innerHTML = '';
+      CONTENT_PURPOSES.forEach(p => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isSelected = p.id === selectedPurpose;
+        btn.className = `p-3 text-xs font-semibold rounded-2xl border text-left transition-all flex flex-col justify-between ${
+          isSelected 
+            ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white border-transparent shadow-md scale-[1.02]' 
+            : 'bg-white text-slate-700 border-slate-200 hover:border-pink-300 hover:bg-pink-50/50'
+        }`;
+        btn.innerHTML = `<span>${p.label}</span>`;
+        btn.addEventListener('click', () => {
+          selectedPurpose = p.id;
+          renderPurposeButtons();
+          updateInputLabels();
+        });
+        purposeContainer.appendChild(btn);
+      });
+    }
+
+    function updateInputLabels() {
+      const activeObj = CONTENT_PURPOSES.find(p => p.id === selectedPurpose);
+      if (!activeObj) return;
+
+      inputHint.textContent = activeObj.hint;
+      if (selectedPurpose === 'Reply Post') {
+        inputLabel.textContent = '2. Paste Original Threads Post / Comment';
+        customInput.placeholder = 'Paste the post or question you want to reply to...';
+      } else if (selectedPurpose === 'Custom Post') {
+        inputLabel.textContent = '2. Enter Product Details / Custom Instructions';
+        customInput.placeholder = 'E.g., Grammar Hub workbook details: Year 3-6, includes 50 exercises, focus on tenses and sentence building. Price RMxx...';
+      } else {
+        inputLabel.textContent = '2. Topic Details / Situation / Context (Optional)';
+        customInput.placeholder = 'E.g., Anak tersangkut bila bina ayat sendiri. Tahu vocabulary tapi tatabahasa terabur...';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 3. AUTHENTICATION LOGIC
+    // -------------------------------------------------------------
+    googleLoginBtn.addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (error) {
+        console.error("Login failed:", error);
+        showToast("⚠️ Login failed. Please try again.", "⚠️");
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      if (user) {
+        loginView.classList.add('hidden');
+        appView.classList.remove('hidden');
+        authHeaderNav.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="${user.photoURL || 'https://placehold.co/100/pink/white?text=V'}" class="w-8 h-8 rounded-full border border-pink-300" alt="Avatar">
+            <button id="logoutBtn" class="text-xs font-semibold text-slate-600 hover:text-pink-600 bg-white px-3 py-1.5 rounded-xl border border-slate-200 hover:border-pink-300 transition-all">
+              Sign Out
+            </button>
+          </div>
+        `;
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+      } else {
+        loginView.classList.remove('hidden');
+        appView.classList.add('hidden');
+        authHeaderNav.innerHTML = '';
+      }
+    });
+
+    // -------------------------------------------------------------
+    // 4. GEMINI GENERATION LOGIC
+    // -------------------------------------------------------------
+    async function generateThreadsContent() {
+      const userContext = customInput.value.trim();
+
+      // UI Loading state
+      generateBtn.disabled = true;
+      btnIcon.textContent = '⏳';
+      btnText.textContent = 'Writing your 5 Threads posts...';
+
+      // Construct Prompt with strict system instructions
+      const systemInstruction = `
+You are the AI content assistant for Vani Learning Hub (@vanimurgen), a Malaysian mother of 3 who shares genuine home-learning experiences, primary English tips, and KSSR educational resources.
+
+CRITICAL IDENTITY & VOICE RULES:
+1. TARGET AUDIENCE: Malaysian parents (especially mothers / mak-mak) with primary school children (Year 1 to Year 6).
+2. LANGUAGE: Natural Malaysian Manglish (~90% everyday BM, ~10% casual English). Use casual everyday words like: I, anak I, korang, mak, ibu, rupanya, sebenarnya, stuck, try, test, progress, basic, writing, grammar, worksheet, home learning, study.
+3. NEVER USE: Indonesian words (e.g., bisa, banget, kamu, kalian), formal/textbook BM (e.g., "Murid perlu meningkatkan..."), formal teacher tone, corporate jargon, or artificial AI introductions like "As parents, we all know..." or "In today's fast-paced world...".
+4. TONE: Warm, casual, honest, relatable, practical, observant, motherly. Speak as one Malaysian mom typing on Threads to another mom. Write short conversational sentences with natural paragraph breaks.
+5. FORMATTING: Short posts (30-120 words). Clean Threads line breaks. Use whitespace appropriately. Emojis strictly used sparingly (max 1-2 per post, only if natural). NO hashtags. NO bulleted numbered textbook essays.
+6. PRODUCT/SOFT-SELLING RULE: If product information is mentioned (e.g., Grammar Hub, English Complete Bundle, Basic English Writing, StudyBox), NEVER hard sell with "BUY NOW" or "LIMITED TIME". Use: Problem -> Personal observation -> What was tried -> What worked -> Natural mention. DO NOT INVENT UNPROVIDED PRODUCT FEATURES OR RESULTS.
+7. VARIATIONS RULE: You MUST return EXACTLY 5 posts in JSON format. Each variation MUST have a distinctly different hook, angle, storytelling entry point, or perspective (e.g., Var 1: Personal mom observation, Var 2: Relatable question to mak-mak, Var 3: Unexpected learning blockage, Var 4: Short story from son's journey, Var 5: Quick practical tip).
+8. ANTI-REPETITION: Avoid starting every post with "Anak korang..." or "Rupanya...". Vary hooks naturally.
+
+OUTPUT REQUIREMENTS:
+Return ONLY a valid JSON object with a single key "posts" containing an array of 5 post objects, like this:
+{
+  "posts": [
+    { "text": "Post 1 text here..." },
+    { "text": "Post 2 text here..." },
+    { "text": "Post 3 text here..." },
+    { "text": "Post 4 text here..." },
+    { "text": "Post 5 text here..." }
+  ]
+}
+`.trim();
+
+      let promptUserText = `CONTENT PURPOSE / CATEGORY: ${selectedPurpose}\n`;
+      if (userContext) {
+        promptUserText += `USER INPUT DETAILS / PRODUCT / TOPIC: ${userContext}\n`;
+      } else {
+        promptUserText += `USER INPUT DETAILS: Create natural everyday Malaysian Threads content appropriate for the "${selectedPurpose}" category.\n`;
+      }
+
+      if (sessionGeneratedHistory.length > 0) {
+        promptUserText += `\nANTI-REPETITION CONTEXT (DO NOT USE SIMILAR HOOKS OR STRUCTURES AS THESE PREVIOUS POSTS):\n` +
+          sessionGeneratedHistory.slice(-5).map((p, i) => `Previous ${i+1}: ${p.substring(0, 80)}...`).join('\n');
+      }
+
+      const payload = {
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: promptUserText }]
+          }
+        ],
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.7
+        }
+      };
+
+      try {
+        // Fetch call using Gemini endpoint (gemini-3-flash-preview)
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${firebaseConfig.apiKey}`;
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`API response failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rawJsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!rawJsonText) {
+          throw new Error("No text returned from Gemini model.");
+        }
+
+        let parsedData;
+        try {
+          parsedData = JSON.parse(rawJsonText);
+        } catch (e) {
+          // Fallback parsing if wrapped in markdown block
+          const cleanText = rawJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+          parsedData = JSON.parse(cleanText);
+        }
+
+        if (parsedData && Array.isArray(parsedData.posts) && parsedData.posts.length > 0) {
+          displayResults(parsedData.posts);
+          
+          // Add to session history for anti-repetition
+          parsedData.posts.forEach(p => {
+            if (p.text) sessionGeneratedHistory.push(p.text);
+          });
+        } else {
+          throw new Error("Invalid output structure received.");
+        }
+
+      } catch (err) {
+        console.error("Content generation error:", err);
+        showToast("⚠️ Could not generate posts. Please try again.", "⚠️");
+      } finally {
+        generateBtn.disabled = false;
+        btnIcon.textContent = '🚀';
+        btnText.textContent = 'GENERATE 5 POSTS';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 5. UI DISPLAY & COPY FUNCTIONS
+    // -------------------------------------------------------------
+    function displayResults(posts) {
+      postsGrid.innerHTML = '';
+      resultsSection.classList.remove('hidden');
+
+      posts.forEach((post, index) => {
+        const postText = post.text.trim();
+        const card = document.createElement('div');
+        card.className = "bg-white/95 rounded-2xl p-5 border border-pink-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4";
+
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-pink-600 bg-pink-50 px-2.5 py-1 rounded-lg">
+                POST ${index + 1}
+              </span>
+              <span class="text-[11px] text-slate-400 font-medium">~${postText.split(/\s+/).length} words</span>
+            </div>
+            <div class="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-normal pt-1 select-text">
+${escapeHtml(postText)}
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-50 flex justify-end">
+            <button class="copy-btn bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-1.5 active:scale-95" data-text="${encodeURIComponent(postText)}">
+              <span>📋</span>
+              <span>COPY</span>
+            </button>
+          </div>
+        `;
+
+        postsGrid.appendChild(card);
+      });
+
+      // Attach Copy Event Listeners
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const textToCopy = decodeURIComponent(e.currentTarget.getAttribute('data-text'));
+          copyToClipboard(textToCopy, e.currentTarget);
+        });
+      });
+
+      // Scroll smoothly to results
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Copy to Clipboard logic with iframe fallback support
+    function copyToClipboard(text, buttonEl) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          triggerCopySuccess(buttonEl);
+        }).catch(() => {
+          fallbackExecCommandCopy(text, buttonEl);
+        });
+      } else {
+        fallbackExecCommandCopy(text, buttonEl);
+      }
+    }
+
+    function fallbackExecCommandCopy(text, buttonEl) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        triggerCopySuccess(buttonEl);
+      } catch (err) {
+        showToast("Failed to copy", "❌");
+      }
+      document.body.removeChild(textarea);
+    }
+
+    function triggerCopySuccess(buttonEl) {
+      const origHTML = buttonEl.innerHTML;
+      buttonEl.innerHTML = `<span>✅</span> <span>Copied!</span>`;
+      buttonEl.classList.remove('bg-pink-50', 'text-pink-700');
+      buttonEl.classList.add('bg-emerald-500', 'text-white');
+
+      showToast("Post copied! Ready to paste into Threads.", "✅");
+
+      setTimeout(() => {
+        buttonEl.innerHTML = origHTML;
+        buttonEl.classList.remove('bg-emerald-500', 'text-white');
+        buttonEl.classList.add('bg-pink-50', 'text-pink-700');
+      }, 2000);
+    }
+
+    function showToast(msg, icon = "📋") {
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+      
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+      }, 3000);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // -------------------------------------------------------------
+    // 6. INITIALIZATION & EVENT LISTENERS
+    // -------------------------------------------------------------
+    generateBtn.addEventListener('click', generateThreadsContent);
+    
+    clearHistoryBtn.addEventListener('click', () => {
+      sessionGeneratedHistory = [];
+      showToast("Session anti-repetition memory cleared!", "🧹");
+    });
+
+    // Initial Setup
+    renderPurposeButtons();
+    updateInputLabels();
+
+  </script>
+</body>
+</html>
