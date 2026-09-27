@@ -374,9 +374,8 @@
       btnIcon.textContent = '⏳';
       btnText.textContent = 'Writing your 5 Threads posts...';
 
-      // Construct Prompt with strict system instructions
-      const systemInstruction = `
-You are the AI content assistant for Vani Learning Hub (@vanimurgen), a Malaysian mother of 3 who shares genuine home-learning experiences, primary English tips, and KSSR educational resources.
+      // System instruction for Vani persona
+      const systemInstructionText = `You are the AI content assistant for Vani Learning Hub (@vanimurgen), a Malaysian mother of 3 who shares genuine home-learning experiences, primary English tips, and KSSR educational resources.
 
 CRITICAL IDENTITY & VOICE RULES:
 1. TARGET AUDIENCE: Malaysian parents (especially mothers / mak-mak) with primary school children (Year 1 to Year 6).
@@ -389,7 +388,7 @@ CRITICAL IDENTITY & VOICE RULES:
 8. ANTI-REPETITION: Avoid starting every post with "Anak korang..." or "Rupanya...". Vary hooks naturally.
 
 OUTPUT REQUIREMENTS:
-Return ONLY a valid JSON object with a single key "posts" containing an array of 5 post objects, like this:
+Return ONLY a valid JSON object with a single key "posts" containing an array of 5 post objects:
 {
   "posts": [
     { "text": "Post 1 text here..." },
@@ -398,8 +397,7 @@ Return ONLY a valid JSON object with a single key "posts" containing an array of
     { "text": "Post 4 text here..." },
     { "text": "Post 5 text here..." }
   ]
-}
-`.trim();
+}`;
 
       let promptUserText = `CONTENT PURPOSE / CATEGORY: ${selectedPurpose}\n`;
       if (userContext) {
@@ -413,25 +411,23 @@ Return ONLY a valid JSON object with a single key "posts" containing an array of
           sessionGeneratedHistory.slice(-5).map((p, i) => `Previous ${i+1}: ${p.substring(0, 80)}...`).join('\n');
       }
 
+      const fullPrompt = `${systemInstructionText}\n\nUSER REQUEST:\n${promptUserText}`;
+
       const payload = {
         contents: [
           {
             role: "user",
-            parts: [{ text: promptUserText }]
+            parts: [{ text: fullPrompt }]
           }
         ],
-        systemInstruction: {
-          parts: [{ text: systemInstruction }]
-        },
         generationConfig: {
-          responseMimeType: "application/json",
           temperature: 0.7
         }
       };
 
       try {
-        // Fetch call using Gemini endpoint (gemini-3-flash-preview)
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${firebaseConfig.apiKey}`;
+        // Updated model to gemini-2.5-flash (officially supported API model)
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${firebaseConfig.apiKey}`;
         
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -440,6 +436,8 @@ Return ONLY a valid JSON object with a single key "posts" containing an array of
         });
 
         if (!response.ok) {
+          const errBody = await response.text();
+          console.error("API Error Body:", errBody);
           throw new Error(`API response failed with status ${response.status}`);
         }
 
@@ -454,8 +452,9 @@ Return ONLY a valid JSON object with a single key "posts" containing an array of
         try {
           parsedData = JSON.parse(rawJsonText);
         } catch (e) {
-          // Fallback parsing if wrapped in markdown block
-          const cleanText = rawJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
+          // Clean JSON string if wrapped in markdown code fence (```json ... ```)
+          let cleanText = rawJsonText.trim();
+          cleanText = cleanText.replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
           parsedData = JSON.parse(cleanText);
         }
 
@@ -500,9 +499,7 @@ Return ONLY a valid JSON object with a single key "posts" containing an array of
               </span>
               <span class="text-[11px] text-slate-400 font-medium">~${postText.split(/\s+/).length} words</span>
             </div>
-            <div class="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-normal pt-1 select-text">
-${escapeHtml(postText)}
-            </div>
+            <div class="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-normal pt-1 select-text">${escapeHtml(postText)}</div>
           </div>
           <div class="pt-2 border-t border-slate-50 flex justify-end">
             <button class="copy-btn bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-1.5 active:scale-95" data-text="${encodeURIComponent(postText)}">
