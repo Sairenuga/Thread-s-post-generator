@@ -32,6 +32,14 @@
               700: '#be185d',
               800: '#9d174d',
               900: '#831843',
+            },
+            purplehub: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              900: '#4c1d95',
             }
           }
         }
@@ -90,7 +98,7 @@
 
   <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 md:py-8">
     
-    <!-- LOGIN VIEW -->
+    <!-- LOGIN VIEW (Shown when logged out) -->
     <div id="loginView" class="hidden max-w-md mx-auto my-12 text-center">
       <div class="glass-card rounded-3xl p-8 shadow-xl border border-pink-100 space-y-6">
         <div class="w-20 h-20 bg-pink-100 text-pink-600 rounded-3xl flex items-center justify-center mx-auto text-3xl font-extrabold shadow-inner">
@@ -126,7 +134,7 @@
       </div>
     </div>
 
-    <!-- GENERATOR APP VIEW -->
+    <!-- GENERATOR APP VIEW (Shown when authenticated) -->
     <div id="appView" class="hidden space-y-6">
       
       <!-- Bio Banner -->
@@ -162,7 +170,7 @@
             <span class="text-xs font-normal text-slate-400">Choose 1 option</span>
           </label>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" id="purposeContainer">
-            <!-- Dynamic Content Purpose Buttons -->
+            <!-- Dynamic Content Purpose Buttons generated via JS -->
           </div>
         </div>
 
@@ -218,6 +226,7 @@
   </div>
 
   <script type="module">
+    // Firebase Modular SDK Import
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getAuth, 
@@ -231,7 +240,7 @@
     // 1. FIREBASE CONFIGURATION
     // -------------------------------------------------------------
     const firebaseConfig = {
-      apiKey: "AQ.Ab8RN6KAog5EDrVtSBZ8SiPDBzlcZwcD0uiwBsJBFefTzxh0hA",
+      apiKey: "AIzaSyCHSrhWhgqcAfKzA9IaH5VRI7LFu1j7lcg",
       authDomain: "thread-s-post-generator.firebaseapp.com",
       databaseURL: "https://thread-s-post-generator-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "thread-s-post-generator",
@@ -240,13 +249,15 @@
       appId: "1:737838813352:web:27c6361b05e59acf60f29d"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
 
+    // Application State
     let currentUser = null;
     let selectedPurpose = 'English Tips';
-    let sessionGeneratedHistory = [];
+    let sessionGeneratedHistory = []; // Anti-repetition tracker
 
     // -------------------------------------------------------------
     // 2. CONTENT TYPES DEFINITION
@@ -280,6 +291,7 @@
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     const toast = document.getElementById('toast');
 
+    // Render Content Purpose Pills
     function renderPurposeButtons() {
       purposeContainer.innerHTML = '';
       CONTENT_PURPOSES.forEach(p => {
@@ -322,13 +334,20 @@
     // 3. AUTHENTICATION LOGIC
     // -------------------------------------------------------------
     googleLoginBtn.addEventListener('click', async () => {
-      try {
+    try {
+        console.log("Starting Google login...");
         await signInWithPopup(auth, googleProvider);
-      } catch (error) {
-        console.error("Login failed:", error);
-        showToast("⚠️ Login failed. Please try again.", "⚠️");
-      }
-    });
+    } catch (error) {
+        console.error("LOGIN ERROR CODE:", error.code);
+        console.error("LOGIN ERROR MESSAGE:", error.message);
+        console.error("FULL LOGIN ERROR:", error);
+
+        showToast(
+            `⚠️ Login failed: ${error.code || error.message}`,
+            "⚠️"
+        );
+    }
+});
 
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
@@ -357,33 +376,37 @@
     async function generateThreadsContent() {
       const userContext = customInput.value.trim();
 
+      // UI Loading state
       generateBtn.disabled = true;
       btnIcon.textContent = '⏳';
       btnText.textContent = 'Writing your 5 Threads posts...';
 
-      const systemInstructionText = `You are the AI content assistant for Vani Learning Hub (@vanimurgen), a Malaysian mother of 3 who shares genuine home-learning experiences, primary English tips, and KSSR educational resources.
+      // Construct Prompt with strict system instructions
+      const systemInstruction = `
+You are the AI content assistant for Vani Learning Hub (@vanimurgen), a Malaysian mother of 3 who shares genuine home-learning experiences, primary English tips, and KSSR educational resources.
 
 CRITICAL IDENTITY & VOICE RULES:
 1. TARGET AUDIENCE: Malaysian parents (especially mothers / mak-mak) with primary school children (Year 1 to Year 6).
 2. LANGUAGE: Natural Malaysian Manglish (~90% everyday BM, ~10% casual English). Use casual everyday words like: I, anak I, korang, mak, ibu, rupanya, sebenarnya, stuck, try, test, progress, basic, writing, grammar, worksheet, home learning, study.
-3. NEVER USE: Indonesian words (bisa, banget, kamu, kalian), formal/textbook BM ("Murid perlu meningkatkan..."), formal teacher tone, corporate jargon, or artificial AI intros like "As parents, we all know...".
-4. TONE: Warm, casual, honest, relatable, practical, observant, motherly. Speak as one Malaysian mom typing on Threads to another mom. Write short conversational sentences.
-5. FORMATTING: Short posts (30-120 words). Clean Threads line breaks. Emojis used sparingly (max 1-2 per post). NO hashtags. NO numbered textbook lists.
-6. PRODUCT/SOFT-SELLING RULE: If product information is mentioned, NEVER hard sell with "BUY NOW" or "LIMITED TIME". Use: Problem -> Personal observation -> What was tried -> What worked -> Natural mention.
-7. VARIATIONS RULE: Return EXACTLY 5 posts in JSON format. Each variation MUST have a distinctly different hook, angle, or storytelling entry point.
-8. ANTI-REPETITION: Avoid starting every post with "Anak korang..." or "Rupanya...".
+3. NEVER USE: Indonesian words (e.g., bisa, banget, kamu, kalian), formal/textbook BM (e.g., "Murid perlu meningkatkan..."), formal teacher tone, corporate jargon, or artificial AI introductions like "As parents, we all know..." or "In today's fast-paced world...".
+4. TONE: Warm, casual, honest, relatable, practical, observant, motherly. Speak as one Malaysian mom typing on Threads to another mom. Write short conversational sentences with natural paragraph breaks.
+5. FORMATTING: Short posts (30-120 words). Clean Threads line breaks. Use whitespace appropriately. Emojis strictly used sparingly (max 1-2 per post, only if natural). NO hashtags. NO bulleted numbered textbook essays.
+6. PRODUCT/SOFT-SELLING RULE: If product information is mentioned (e.g., Grammar Hub, English Complete Bundle, Basic English Writing, StudyBox), NEVER hard sell with "BUY NOW" or "LIMITED TIME". Use: Problem -> Personal observation -> What was tried -> What worked -> Natural mention. DO NOT INVENT UNPROVIDED PRODUCT FEATURES OR RESULTS.
+7. VARIATIONS RULE: You MUST return EXACTLY 5 posts in JSON format. Each variation MUST have a distinctly different hook, angle, storytelling entry point, or perspective (e.g., Var 1: Personal mom observation, Var 2: Relatable question to mak-mak, Var 3: Unexpected learning blockage, Var 4: Short story from son's journey, Var 5: Quick practical tip).
+8. ANTI-REPETITION: Avoid starting every post with "Anak korang..." or "Rupanya...". Vary hooks naturally.
 
-OUTPUT FORMAT:
-Respond strictly in standard JSON format:
+OUTPUT REQUIREMENTS:
+Return ONLY a valid JSON object with a single key "posts" containing an array of 5 post objects, like this:
 {
   "posts": [
-    { "text": "Post 1 text..." },
-    { "text": "Post 2 text..." },
-    { "text": "Post 3 text..." },
-    { "text": "Post 4 text..." },
-    { "text": "Post 5 text..." }
+    { "text": "Post 1 text here..." },
+    { "text": "Post 2 text here..." },
+    { "text": "Post 3 text here..." },
+    { "text": "Post 4 text here..." },
+    { "text": "Post 5 text here..." }
   ]
-}`;
+}
+`.trim();
 
       let promptUserText = `CONTENT PURPOSE / CATEGORY: ${selectedPurpose}\n`;
       if (userContext) {
@@ -393,28 +416,29 @@ Respond strictly in standard JSON format:
       }
 
       if (sessionGeneratedHistory.length > 0) {
-        promptUserText += `\nANTI-REPETITION CONTEXT (Avoid similar hooks/structures):\n` +
+        promptUserText += `\nANTI-REPETITION CONTEXT (DO NOT USE SIMILAR HOOKS OR STRUCTURES AS THESE PREVIOUS POSTS):\n` +
           sessionGeneratedHistory.slice(-5).map((p, i) => `Previous ${i+1}: ${p.substring(0, 80)}...`).join('\n');
       }
-
-      const fullPrompt = `${systemInstructionText}\n\nUSER REQUEST:\n${promptUserText}`;
 
       const payload = {
         contents: [
           {
             role: "user",
-            parts: [{ text: fullPrompt }]
+            parts: [{ text: promptUserText }]
           }
         ],
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        },
         generationConfig: {
-          temperature: 0.7,
-          responseMimeType: "application/json"
+          responseMimeType: "application/json",
+          temperature: 0.7
         }
       };
 
       try {
-        // Standardized production REST API endpoint
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${firebaseConfig.apiKey}`;
+        // Fetch call using Gemini endpoint (gemini-3-flash-preview)
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${firebaseConfig.apiKey}`;
         
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -423,40 +447,39 @@ Respond strictly in standard JSON format:
         });
 
         if (!response.ok) {
-          const errData = await response.json().catch(() => ({}));
-          const detailMsg = errData.error?.message || `HTTP ${response.status} ${response.statusText}`;
-          console.error("Gemini API Error Detail:", errData);
-          throw new Error(detailMsg);
+          throw new Error(`API response failed with status ${response.status}`);
         }
 
         const data = await response.json();
         const rawJsonText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!rawJsonText) {
-          throw new Error("No text content generated by the model.");
+          throw new Error("No text returned from Gemini model.");
         }
 
         let parsedData;
         try {
           parsedData = JSON.parse(rawJsonText);
         } catch (e) {
-          const cleanText = rawJsonText.trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+          // Fallback parsing if wrapped in markdown block
+          const cleanText = rawJsonText.replace(/```json/g, '').replace(/```/g, '').trim();
           parsedData = JSON.parse(cleanText);
         }
 
         if (parsedData && Array.isArray(parsedData.posts) && parsedData.posts.length > 0) {
           displayResults(parsedData.posts);
           
+          // Add to session history for anti-repetition
           parsedData.posts.forEach(p => {
             if (p.text) sessionGeneratedHistory.push(p.text);
           });
         } else {
-          throw new Error("Received invalid data structure from API.");
+          throw new Error("Invalid output structure received.");
         }
 
       } catch (err) {
         console.error("Content generation error:", err);
-        showToast(`⚠️ Error: ${err.message || "Failed to generate posts."}`, "⚠️");
+        showToast("⚠️ Could not generate posts. Please try again.", "⚠️");
       } finally {
         generateBtn.disabled = false;
         btnIcon.textContent = '🚀';
@@ -484,7 +507,9 @@ Respond strictly in standard JSON format:
               </span>
               <span class="text-[11px] text-slate-400 font-medium">~${postText.split(/\s+/).length} words</span>
             </div>
-            <div class="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-normal pt-1 select-text">${escapeHtml(postText)}</div>
+            <div class="text-slate-800 text-sm leading-relaxed whitespace-pre-line font-normal pt-1 select-text">
+${escapeHtml(postText)}
+            </div>
           </div>
           <div class="pt-2 border-t border-slate-50 flex justify-end">
             <button class="copy-btn bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold px-4 py-2 rounded-xl text-xs transition-all flex items-center space-x-1.5 active:scale-95" data-text="${encodeURIComponent(postText)}">
@@ -497,6 +522,7 @@ Respond strictly in standard JSON format:
         postsGrid.appendChild(card);
       });
 
+      // Attach Copy Event Listeners
       document.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const textToCopy = decodeURIComponent(e.currentTarget.getAttribute('data-text'));
@@ -504,9 +530,11 @@ Respond strictly in standard JSON format:
         });
       });
 
+      // Scroll smoothly to results
       resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    // Copy to Clipboard logic with iframe fallback support
     function copyToClipboard(text, buttonEl) {
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
@@ -558,7 +586,7 @@ Respond strictly in standard JSON format:
       
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-      }, 4000);
+      }, 3000);
     }
 
     function escapeHtml(str) {
@@ -575,6 +603,7 @@ Respond strictly in standard JSON format:
       showToast("Session anti-repetition memory cleared!", "🧹");
     });
 
+    // Initial Setup
     renderPurposeButtons();
     updateInputLabels();
 
